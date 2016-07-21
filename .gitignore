@@ -1,4 +1,4 @@
-
+ï»¿
 # Created by https://www.gitignore.io/api/unity3d,unity
 
 #!! ERROR: unity3d is undefined. Use list command to see defined gitignore types !!#
@@ -63,11 +63,11 @@ bld/
 [Oo]bj/
 [Ll]og/
 
-# ±âÅ¸ ¿¬½À¿ë ÆÄÀÏµé
+# ê¸°íƒ€ ì—°ìŠµìš© íŒŒì¼ë“¤
 Etc/
 _Except/
 _Except.meta
 
-# ¿öµå/¿¢¼¿ ÀÓ½Ã ÆÄÀÏ
+# ì›Œë“œ/ì—‘ì…€ ì„ì‹œ íŒŒì¼
 ~$*.docx
-~$*.docx
+~$*.xlsx
