@@ -1,0 +1,183 @@
+fileFormatVersion: 2
+guid: 5148060b15674ff4dae169b9caeb2b02
+timeCreated: 1468522034
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: StageTxt
+    21300002: ClearTxt
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: StageTxt
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 107
+        width: 230
+        height: 62
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 37, y: 5}
+        - {x: 35, y: -4}
+        - {x: 33, y: 4}
+        - {x: 40, y: 11}
+        - {x: 58, y: 7}
+        - {x: 62, y: 14}
+        - {x: 62, y: 25}
+        - {x: 56, y: 27}
+        - {x: 25, y: 27}
+        - {x: 15, y: 19}
+        - {x: 15, y: -17}
+        - {x: 26, y: -28}
+        - {x: 41, y: -30}
+        - {x: 59, y: -30}
+        - {x: 62, y: -26}
+        - {x: 62, y: 6}
+        - {x: 40, y: 11}
+      - - {x: -93, y: 27}
+        - {x: -101, y: 26}
+        - {x: -108, y: 15}
+        - {x: -108, y: -19}
+        - {x: -102, y: -25}
+        - {x: -98, y: -28}
+        - {x: -74, y: -28}
+        - {x: -66, y: -23}
+        - {x: -66, y: 25}
+        - {x: -71, y: 27}
+      - - {x: -65, y: -2}
+        - {x: -54, y: -28}
+        - {x: -36, y: -28}
+        - {x: -23, y: -10}
+        - {x: -23, y: 27}
+        - {x: -62, y: 27}
+        - {x: -65, y: 23}
+      - - {x: 66, y: 27}
+        - {x: 66, y: -27}
+        - {x: 67, y: -28}
+        - {x: 107, y: -28}
+        - {x: 107, y: 27}
+      - - {x: -18, y: 28}
+        - {x: -30, y: -6}
+        - {x: -30, y: -27}
+        - {x: 17, y: -27}
+        - {x: 17, y: -3}
+        - {x: 0, y: 28}
+    - name: ClearTxt
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 10
+        width: 351
+        height: 93
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -107.5, y: 23.5}
+        - {x: -106.5, y: 34.5}
+        - {x: -106.5, y: 38.5}
+        - {x: -118.5, y: 41.5}
+        - {x: -159.5, y: 41.5}
+        - {x: -171.5, y: 34.5}
+        - {x: -171.5, y: -29.5}
+        - {x: -169.5, y: -38.5}
+        - {x: -117.5, y: -38.5}
+        - {x: -106.5, y: -30.5}
+        - {x: -106.5, y: -14.5}
+        - {x: -119.5, y: -8.5}
+      - - {x: -103.5, y: -33.5}
+        - {x: -99.5, y: -38.5}
+        - {x: -54.5, y: -38.5}
+        - {x: -54.5, y: -4.5}
+        - {x: -78.5, y: 40.5}
+        - {x: -98.5, y: 40.5}
+        - {x: -103.5, y: 35.5}
+      - - {x: 80.5, y: 41.5}
+        - {x: 77.5, y: 30.5}
+        - {x: 77.5, y: -38.5}
+        - {x: 138.5, y: -38.5}
+        - {x: 138.5, y: 31.5}
+        - {x: 133.5, y: 41.5}
+      - - {x: 141.5, y: -15.5}
+        - {x: 141.5, y: -35.5}
+        - {x: 149.5, y: -38.5}
+        - {x: 161.5, y: -38.5}
+        - {x: 165.5, y: -36.5}
+        - {x: 165.5, y: -19.5}
+        - {x: 164.5, y: -15.5}
+      - - {x: -48.5, y: 40.5}
+        - {x: -52.5, y: 29.5}
+        - {x: -52.5, y: -32.5}
+        - {x: -49.5, y: -37.5}
+        - {x: 5.5, y: -37.5}
+        - {x: 6.5, y: -36.5}
+        - {x: 6.5, y: 40.5}
+      - - {x: 54.5, y: 42.5}
+        - {x: 34.5, y: 42.5}
+        - {x: 25.5, y: 39.5}
+        - {x: 12.5, y: -1.5}
+        - {x: 7.5, y: -23.5}
+        - {x: 7.5, y: -32.5}
+        - {x: 11.5, y: -36.5}
+        - {x: 14.5, y: -37.5}
+        - {x: 73.5, y: -37.5}
+        - {x: 74.5, y: -34.5}
+        - {x: 74.5, y: -1.5}
+      - - {x: 147.5, y: 45.5}
+        - {x: 143.5, y: 40.5}
+        - {x: 143.5, y: -9.5}
+        - {x: 149.5, y: -13.5}
+        - {x: 162.5, y: -13.5}
+        - {x: 164.5, y: -12.5}
+        - {x: 164.5, y: 45.5}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
