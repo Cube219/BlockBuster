@@ -1,5 +1,4 @@
-﻿
-# Created by https://www.gitignore.io/api/unity3d,unity
+﻿# Created by https://www.gitignore.io/api/unity3d,unity
 
 #!! ERROR: unity3d is undefined. Use list command to see defined gitignore types !!#
 
@@ -30,7 +29,6 @@ ExportedObj/
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
-
 # Builds
 *.apk
 *.unitypackage
@@ -71,3 +69,6 @@ _Except.meta
 # 워드/엑셀 임시 파일
 ~$*.docx
 ~$*.xlsx
+
+#node.js with visualstudio
+typings/
