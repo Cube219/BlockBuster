@@ -1,0 +1,16 @@
+{
+  "name": "BlockBuster_Server",
+  "version": "1.0.0",
+  "description": "BlockBuster의 서버입니다.",
+  "main": "app.js",
+  "author": "Cube219",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.0",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mysql": "^2.11.1",
+    "node-forge": "^0.6.41",
+    "uuid": "^2.0.2"
+  }
+}
