@@ -51,7 +51,7 @@ public class ServerManager : MonoBehaviour {
 	}
 
 	// 회원가입(Email)
-	public void Post_Register_f(string email, string password)
+	public void Post_RegisterWithEmail_f(string email, string password)
 	{
 		Dictionary<string, string> t = new Dictionary<string, string> {
 			{"userType", "User"},
@@ -61,6 +61,19 @@ public class ServerManager : MonoBehaviour {
 		};
 
 		StartCoroutine(Post(url + "/api/v1/user", t, (string result)=> {
+			Post_RegisterResult(ProcessData(result));
+		}));
+	}
+	// 회원가입(Facebook)
+	public void Post_RegisterWithFacebook_f(string fbUserId)
+	{
+		Dictionary<string, string> t = new Dictionary<string, string> {
+			{"userType", "User"},
+			{"accountType", "Facebook"},
+			{"fbUserId", fbUserId}
+		};
+
+		StartCoroutine(Post(url + "/api/v1/user", t, (string result) => {
 			Post_RegisterResult(ProcessData(result));
 		}));
 	}
@@ -91,7 +104,7 @@ public class ServerManager : MonoBehaviour {
 	}
 	
 	// 로그인(Email)
-	public void Post_Login_f(string email, string password)
+	public void Post_LoginWithEmail_f(string email, string password)
 	{
 		Dictionary<string, string> t = new Dictionary<string, string> {
 			{"accountType", "Email"},
@@ -99,6 +112,18 @@ public class ServerManager : MonoBehaviour {
 			{"password", password}
 		};
 		
+		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result) => {
+			Post_LoginResult(ProcessData(result));
+		}));
+	}
+	// 로그인(Facebook)
+	public void Post_LoginWithFacebook_f(string fbUserId)
+	{
+		Dictionary<string, string> t = new Dictionary<string, string> {
+			{"accountType", "Facebook"},
+			{"fbUserId", fbUserId}
+		};
+
 		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result) => {
 			Post_LoginResult(ProcessData(result));
 		}));

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Facebook.Unity;
 
 namespace LobbyScene.UI.Windows {
 
@@ -115,6 +116,68 @@ namespace LobbyScene.UI.Windows {
 		// 페이스북 로그인
 		public void LoginPanel_LoginWithFacebook()
 		{
+			// 로그인
+			FB.LogInWithReadPermissions(new List<string>{"public_profile"}, FBLoginCallback);
+		}
+		private void FBLoginCallback(ILoginResult result) {
+			if(FB.IsLoggedIn) { // 로그인 됨
+				Debug.Log("SuccessFul Login");
+				// 페북 userid 저장
+				DataManager.fbUserid = AccessToken.CurrentAccessToken.UserId;
+
+				UserManager.name = null;
+				// 서버로 로그인 시도
+				ServerManager.m.Post_LoginResult += LoginWithFacebookResult;
+				ServerManager.m.Post_LoginWithFacebook_f(DataManager.fbUserid);
+			} else {
+				Debug.Log("Login Denied");
+			}
+		}
+		private void LoginWithFacebookResult(Dictionary<string, string> data)
+		{
+			ServerManager.m.Post_LoginResult -= LoginWithFacebookResult;
+
+			if(data["result"] == "False") { // 페북으로 로그인 실패
+				// 계정을 새로 만듬
+				ServerManager.m.Post_RegisterResult += SignUpWithFacebookResult;
+				ServerManager.m.Post_RegisterWithFacebook_f(DataManager.fbUserid);
+			} else { // 성공
+				// 받은 유저 정보를 UserManager에 넣어줌(name 제외)
+				UserManager.userState = UserManager.State.Login;
+				UserManager.uid = data["uid"];
+				UserManager.sid = data["sid"];
+				UserManager.accountType = data["accountType"];
+				UserManager.userType = data["userType"];
+				//UserManager.name = data["name"];
+
+				// 로그인 정보 저장
+				DataManager.accountType = UserManager.accountType;
+				DataManager.SaveAccountData();
+
+				// 방금 새로 만든 계정인 경우(UserManager.name에 이미 값이 있는 경우)
+				if(UserManager.name != null) {
+					// CreateAccountPanel로 이동
+					ShowPanel(Panel.CreateAccount);
+				} else {
+					// name 값 넣어줌
+					UserManager.name = data["name"];
+
+					// AccountPanel로 이동
+					accountPanel_nameText.text = UserManager.name;
+					ShowPanel(Panel.Account);
+				}
+			}
+		}
+		private void SignUpWithFacebookResult(Dictionary<string, string> data)
+		{
+			if(data["result"] == "False") { // 페북으로 계정 새로 만들기 실패
+			} else { // 성공
+				// 방금 새로 만든 계정이라는 흔적
+				UserManager.name = "!@#$";
+				// 서버로 로그인 시도
+				ServerManager.m.Post_LoginResult += LoginWithFacebookResult;
+				ServerManager.m.Post_LoginWithFacebook_f(DataManager.fbUserid);
+			}
 		}
 
 		// 트위터 로그인
@@ -164,7 +227,7 @@ namespace LobbyScene.UI.Windows {
 			emailSignUpPanel_errorText.text = "";
 			// 서버로 정보 보냄
 			ServerManager.m.Post_RegisterResult += SignUpResult;
-			ServerManager.m.Post_Register_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
+			ServerManager.m.Post_RegisterWithEmail_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
 		}
 		public void SignUpResult(Dictionary<string, string> data)
 		{
@@ -188,7 +251,7 @@ namespace LobbyScene.UI.Windows {
 			emailSignUpPanel_errorText.text = "";
 			// 서버로 정보 보냄
 			ServerManager.m.Post_LoginResult += LoginResult;
-			ServerManager.m.Post_Login_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
+			ServerManager.m.Post_LoginWithEmail_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
 		}
 		public void LoginResult(Dictionary<string, string> data)
 		{
@@ -218,6 +281,9 @@ namespace LobbyScene.UI.Windows {
 						DataManager.password = emailSignUpPanel_passwordInputField.text;
 						break;
 
+					case "Facebook":
+						break;
+
 					default:
 						break;
 				}
@@ -232,6 +298,7 @@ namespace LobbyScene.UI.Windows {
 					UserManager.name = data["name"];
 
 					// AccountPanel로 이동
+					accountPanel_nameText.text = UserManager.name;
 					ShowPanel(Panel.Account);
 				}
 			}

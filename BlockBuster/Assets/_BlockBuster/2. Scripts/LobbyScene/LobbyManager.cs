@@ -45,6 +45,7 @@ namespace LobbyScene {
 				// 로그아웃 처리
 				if(UserManager.userState == UserManager.State.Login)
 					ServerManager.m.Post_Logout_f(UserManager.uid, UserManager.sid);
+				Application.Quit();
 			}
 		}
 
