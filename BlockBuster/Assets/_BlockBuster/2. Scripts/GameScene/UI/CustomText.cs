@@ -47,7 +47,6 @@ namespace GameScene.UI {
 		// 텍스트 변경
 		public void changeText(int num)
 		{
-
 			// 글자 수 계산
 			int numCount = 0;
 
@@ -116,7 +115,7 @@ namespace GameScene.UI {
 						t.GetComponent<Image>().color = color;
 
 						Instantiate(t);
-						t.transform.SetParent(this.transform);
+						t.GetComponent<RectTransform>().SetParent(this.transform);
 						t.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
 
 						commas.Add(t);

@@ -121,6 +121,7 @@ namespace GameScene {
 		}
 		private void SendScoreResult(Dictionary<string, string> data)
 		{
+			ServerManager.m.Post_ScoreResult -= SendScoreResult;
 			resultWindow.Show(score, int.Parse(data["rank"]), int.Parse(data["rankChange"]), bool.Parse(data["isNewRecord"]));
 		}
 
