@@ -115,13 +115,13 @@ public class ServerManager : MonoBehaviour {
 		foreach(KeyValuePair<string, string> data in datas) {
 			form.AddField(data.Key, data.Value);
 		}
-
-		WWW www = new WWW(url, form);
 		
+		WWW www = new WWW(url, form);
+
 		// 보냄
 		yield return www;
 
-		if(www.error == null) {
+		if(www.error == "Null") {
 		} else {
 			callback(www.text);
 		}
