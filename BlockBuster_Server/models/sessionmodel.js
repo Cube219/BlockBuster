@@ -64,6 +64,20 @@ SessionModel.auth = function(req, res, next) {
 	}
 };
 
+// 세션 정보 가져옴
+SessionModel.get = function(sid, callback) {
+	for(var i = 0; i < sessionList.length; i++) {
+		if(sessionList[i].sid == sid) {
+			// 갱신도 해줌
+			sessionList[i].remainTime = 3600;
+			// 정보 보냄
+			return callback({"result": true, "sid": sessionList[i].sid, "uid": sessionList[i].uid });
+		}
+	}
+	// 못 찾음
+	callback({ "result": false, "error": 601 });
+};
+
 // 세션 갱신
 SessionModel.refresh = function(sid) {
 	for(var i = 0; i < sessionList.length; i++) {

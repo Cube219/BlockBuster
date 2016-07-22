@@ -141,6 +141,22 @@ AccountModel.login = function (params, callback) {
 	}
 };
 
+// 세션으로 로그인
+AccountModel.loginWithSession = function(params, callback) {
+
+	// sid로 세션 정보 가져옴
+	SessionModel.get(params.sid, function(result) {
+		if(result.result == true) {
+			// 얻은 uid로 유저 정보 가져옴
+			AccountModel.getByUid(result, function(result) {
+				callback(result);
+			});
+		} else {
+			callback(result);
+		}
+	});
+};
+
 // 로그아웃
 AccountModel.logout = function(params, callback) {
 	// 세션 제거

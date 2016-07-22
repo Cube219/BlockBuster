@@ -100,6 +100,19 @@ var appRouter = function(app) {
 		});
 	});
 
+	// 10. 세션 로그인
+	app.post("/api/v1/user/login/session", function(req, res) {
+		// 값 없는것 있으면 오류 출력
+		if(!req.body.sid) {
+			return res.status(400).send({ "status": "error", "message": "A sid is required" });
+		}
+
+		// 로그인
+		AccountModel.loginWithSession(req.body, function(result) {
+			res.send(result);
+		});
+	});
+
 	/*
 	app.get("/api/auth", function(req, res, next) {
 		if(!req.query.username) {
