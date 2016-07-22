@@ -35,7 +35,7 @@ SessionModel.create = function(params, callback){
 	var log = { uid: session.uid, access_date: new Date(), close_date: null };
 	logdb.query("INSERT INTO Log_Access SET ?", log);
 	
-	callback({"result": {"uid": params.uid, "sid": session.sid}, error: null});
+	callback({"result": true, "uid": params.uid, "sid": session.sid, error: null});
 };
 
 // 세션 인증

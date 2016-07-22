@@ -73,9 +73,10 @@ StateModel.saveScore = function(uid, score, callback) {
 		}
 
 		var r = {
-			"result": {
-				"isNewRecord": isNewRecord, "rank": currentRank, "rankChange": previousRank - currentRank
-			},
+            "result": true,
+            
+			"isNewRecord": isNewRecord, "rank": currentRank, "rankChange": previousRank - currentRank,
+			
 			"error": null
 		};
 
