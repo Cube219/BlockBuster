@@ -77,7 +77,7 @@ StateModel.saveScore = function(uid, score, callback) {
             
 			"isNewRecord": isNewRecord, "rank": currentRank, "rankChange": previousRank - currentRank,
 			
-			"error": null
+			"error": 0
 		};
 
 		// DB에 previous_rank 값 넣어줌

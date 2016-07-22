@@ -35,7 +35,7 @@ SessionModel.create = function(params, callback){
 	var log = { uid: session.uid, access_date: new Date(), close_date: null };
 	logdb.query("INSERT INTO Log_Access SET ?", log);
 	
-	callback({"result": true, "uid": params.uid, "sid": session.sid, error: null});
+	callback({"result": true, "uid": params.uid, "sid": session.sid, error: 0});
 };
 
 // 세션 인증
@@ -81,7 +81,7 @@ SessionModel.destroy = function(sid, callback) {
 			sessionList.splice(s, 1);
 			console.log("A session is destroied. (current num : " + sessionList.length + ")");
 
-			return callback({"result": true, "error": null});
+			return callback({"result": true, "error": 0});
 		}
 	}
 };

@@ -28,7 +28,7 @@ AccountModel.create = function(params, callback) {
 					if(err) throw err;
 					
 					// 성공
-					callback({"result": true, "error": null});
+					callback({"result": true, "error": 0});
 					console.log("Complete to Create Account.");
 				});
 			} else { // 중복된 이메일이 있음(쿼리 결과가 있음)
@@ -47,12 +47,28 @@ AccountModel.changeName = function(params, callback){
 		if(result.affectedRows == 0){// Row를 찾을 수 없다 (맞는 uid가 없다)
 			callback({"result": false, "error": 200});
 		} else {// 성공 (값이 안 바뀌어도 성공으로 치자)
-			callback({"result": true, "error": null});
+			callback({"result": true, "error": 0});
 		}
 	});
 };
 
 // uid로 유저 정보 찾음
+AccountModel.getByUid = function(params, callback) {
+	// 검색
+	db.query("SELECT * FROM User WHERE uid = ?", params.uid, function(err, result) {
+		if(err) throw err;
+
+		if(result.length == 0) { // 없음
+			callback({"result": false, "error": 200});
+		} else { // 있음
+			callback({
+				"result": true,
+				"name": result[0].name, "userType": result[0].user_type, "accountType": result[0].account_type,
+				"error": 0
+			});
+		}
+	});
+};
 
 // 기타 정보로 유저 정보 찾음
 AccountModel.getByOther = function(params, callback){
@@ -66,7 +82,7 @@ AccountModel.getByOther = function(params, callback){
 				if(result.length == 0){// 없음
 					callback({"result": false, "error": 201});
 				} else {// 있음
-					callback({"result": true, "error": null});
+					callback({"result": true, "error": 0});
 				}
 			});
 	}

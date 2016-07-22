@@ -44,6 +44,16 @@ var appRouter = function(app) {
 	});
 	
 	// 3. 회원 조회(uid)
+    app.get("/api/v1/user/uid", function(req, res) {
+		// 값 없는 것 있으면 오류 출력
+		if(!req.query.uid) {
+			return res.state(400).send({ "status": "error", "message": "A uid is required" });
+		}
+		// 조회
+		AccountModel.getByUid(req.query, function(result) {
+			res.send(result);
+		});
+    });
 	
 	// 4. 회원 조회(기타)
 	app.get("/api/v1/user/etc", function(req, res){
