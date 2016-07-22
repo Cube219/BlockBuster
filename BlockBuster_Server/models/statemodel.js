@@ -72,6 +72,10 @@ StateModel.saveScore = function(uid, score, callback) {
 			isNewRecord = true;
 		}
 
+		// ·Î±×¿¡ ³²±è
+		var log = { uid: session.uid, score: score, get_date: new Date() };
+		logdb.query("INSERT INTO Log_Score SET ?", log);
+
 		var r = {
             "result": true,
             
