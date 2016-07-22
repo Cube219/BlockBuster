@@ -34,8 +34,13 @@ SessionModel.create = function(params, callback){
 	// 로그에 남김
 	var log = { uid: session.uid, access_date: new Date(), close_date: null };
 	logdb.query("INSERT INTO Log_Access SET ?", log);
-	
-	callback({"result": true, "uid": params.uid, "sid": session.sid, error: 0});
+
+	// 유저 정보 보냄
+	callback({
+		"result": true,
+		"uid": params.uid, "sid": session.sid, "name": params.name, "accountType": params.account_type, "userType": params.user_type,
+		error: 0
+	});
 };
 
 // 세션 인증
