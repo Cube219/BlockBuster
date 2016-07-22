@@ -30,7 +30,7 @@ var appRouter = function(app) {
 	});
 	
 	// 2. 회원 이름 변경
-	app.put("/api/v1/user/change_name", function(req, res){
+	app.post("/api/v1/user/change_name", function(req, res){
 		// 값 업는것 있으면 오류 출력
 		if(!req.body.uid){
 			return res.status(400).send({"status": "error", "message": "A uid is required"});
