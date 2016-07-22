@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 public class ServerManager : MonoBehaviour {
 
@@ -22,12 +23,14 @@ public class ServerManager : MonoBehaviour {
 
 	public delegate void Post_Register(Dictionary<string, string> data);
 	public delegate void Post_ChangeName(Dictionary<string, string> data);
+	public delegate void Get_GetUserByUid(Dictionary<string, string> data);
 	public delegate void Post_Login(Dictionary<string, string> data);
 	public delegate void Post_Score(Dictionary<string, string> data);
 	public delegate void Post_Logout(Dictionary<string, string> data);
 
 	public event Post_Register Post_RegisterResult;
 	public event Post_ChangeName Post_ChangeNameResult;
+	public event Get_GetUserByUid Get_GetUserByUidResult;
 	public event Post_Login Post_LoginResult;
 	public event Post_Score Post_ScoreResult;
 	public event Post_Logout Post_LogoutResult;
@@ -67,6 +70,18 @@ public class ServerManager : MonoBehaviour {
 		}));
 	}
 
+	// 회원 조회(uid)
+	public void Get_GetUserByUid_f(string uid)
+	{
+		Dictionary<string, string> t = new Dictionary<string, string> {
+			{"uid", uid}
+		};
+
+		StartCoroutine(Get(url + "/api/v1/user/uid", t, (string result) => {
+			Get_GetUserByUidResult(ProcessData(result));
+		}));
+	}
+	
 	// 로그인(Email)
 	public void Post_Login_f(string email, string password)
 	{
@@ -109,6 +124,29 @@ public class ServerManager : MonoBehaviour {
 	}
 
 	// ------------------------------------
+	private IEnumerator Get(string url, Dictionary<string, string> datas, System.Action<string> callback)
+	{
+		StringBuilder b = new StringBuilder(url);
+		b.Append("?");
+
+		if(datas.Count != 0) {
+			foreach(KeyValuePair<string, string> data in datas) {
+				b.Append(data.Key).Append("=").Append(data.Value).Append("&");
+			}
+			b.Remove(b.Length - 1, 1);
+		}
+
+		WWW www = new WWW(b.ToString());
+
+		// 보냄
+		yield return www;
+
+		if(www.error == "Null") {
+		} else {
+			callback(www.text);
+		}
+	}
+
 	private IEnumerator Post(string url, Dictionary<string, string> datas, System.Action<string> callback)
 	{
 		WWWForm form = new WWWForm();
