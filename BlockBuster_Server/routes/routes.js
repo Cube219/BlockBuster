@@ -96,6 +96,32 @@ var appRouter = function(app) {
 		});
 	});
 
+	// 8. 순위 가져옴
+	app.get("/api/v1/score", function(req, res) {
+		// 값 없는것 있으면 오류 출력
+		if(!req.query.uid) {
+			return res.status(400).send({ "status": "error", "message": "A uid is required" });
+		}
+		// 가져옴
+		StateModel.getRank(req.query.uid, function(result) {
+			res.send(result);
+		});
+	});
+
+	// 9. 순위들 가져옴
+	app.get("/api/v1/score/multi", function(req, res) {
+		// 값 없는것 있으면 오류 출력
+		if(!req.query.rankStart) {
+			return res.status(400).send({ "status": "error", "message": "A rankStart is required" });
+		} else if(!req.query.rankEnd) {
+			return res.status(400).send({ "status": "error", "message": "A rankEnd is required" });
+		}
+		// 가져옴
+		StateModel.getRanks(req.query.rankStart, req.query.rankEnd, function(result) {
+			res.send(result);
+		});
+	});
+
 	// 10. 세션 로그인
 	app.post("/api/v1/user/login/session", function(req, res) {
 		// 값 없는것 있으면 오류 출력

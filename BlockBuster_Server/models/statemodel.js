@@ -110,6 +110,57 @@ StateModel.saveScore = function(uid, score, callback) {
 	});
 }
 
+// 랭킹 가져옴
+StateModel.getRanks = function(uid, callback) {
+
+	// DB 기록 가져오는 함수
+	var getScoreDataInDB = function(callback) {
+		db.query("SELECT uid, score, (SELECT COUNT(*) + 1 FROM Score WHERE score > t.score) AS rank FROM Score AS t ORDER BY rank ASC;", function(err, result) {
+			if(err) throw err;
+
+			// 쿼리 결과값 보내주고 계속 진행
+			callback(null, result);
+		});
+	};
+
+	// 랭킹 가져오는 함수
+	var getRank = function(scoreData, callback) {
+		for(var i in scoreData) {
+			if(scoreData[i].uid == uid) {
+				// 랭킹 값 보내주고 계속 진행
+				callback(null, scoreData[i].rank);
+			}
+		}
+	};
+
+	// 데이터 가져옴 -> 랭킹 가져옴 -> 마지막
+	async.waterfall([getScoreDataInDB, getRank], function(err, result) {
+		callback({"result": true, "rank": result, "error": 0});
+	});
+};
+
+// 랭킹들 가져옴
+StateModel.getRanks = function(rankStart, rankEnd, callback) {
+	// 랭킹 다 가져옴
+	db.query("SELECT u.uid, u.name, s.score, (SELECT COUNT(*) + 1 FROM Score WHERE score > s.score) AS rank FROM Score AS s JOIN User AS u ON u.uid=s.uid ORDER BY rank ASC;", function(err, result) {
+		if(err) throw err;
+
+		// 초과할 경우 자름
+		if(rankEnd > result.length)
+			rankEnd = result.length;
+		if(rankStart < 1)
+			rankStart = 1;
+
+		// 리스트에 다 넣어줌
+		var list = [];
+		for(var i = rankStart; i <= rankEnd; i++) {
+			list[i - rankStart] = { "uid": result[i-1].uid, "name": result[i-1].name, "score": result[i-1].score, "rank": result[i-1].rank };
+		}
+
+		callback({"result": true, "data": list, "error": 0});
+	});
+};
+
 /*
 StateModel.save = function(uid, name, preVer, data, callback) {
     db.get("user::" + uid + "::state", function(error, result) {
