@@ -15,10 +15,6 @@ var appRouter = function(app) {
 			return res.status(400).send({"status": "error", "message": "A userType is required"});
 		} else if(!req.body.accountType) {
 			return res.status(400).send({"status": "error", "message": "A accountType is required"});
-		} else if(!req.body.email) {
-			return res.status(400).send({"status": "error", "message": "A email is required"});
-		} else if(!req.body.password) {
-			return res.status(400).send({"status": "error", "message": "A password is required"});
 		}
 		// 계정 생성
 		AccountModel.create(req.body, function(result) {

@@ -15,24 +15,46 @@ AccountModel.create = function(params, callback) {
 		name: "New User",
         user_type: params.userType,
 		account_type: params.accountType,
-		email: params.email,
-        password: forge.md.sha1.create().update(params.password).digest().toHex(),
-		join_date: new Date()
+		email: null,
+		password: null,
+		join_date: new Date(),
+		fb_userid: null
     };
-	// 이메일의 경우 중복된 이메일이 있는지 확인
-	if(params.accountType == "Email"){
-		db.query("SELECT * FROM User WHERE email = ?", [params.email], function(err, result){
-			if(result.length == 0){ // 중복된 이메일이 없음(쿼리 결과가 없음)
+
+	// 이메일의 경우
+	if(params.accountType == "Email") {
+		userDoc.email = params.email;
+		userDoc.password = forge.md.sha1.create().update(params.password).digest().toHex();
+		// 중복된 이메일이 있는지 확인
+		db.query("SELECT * FROM User WHERE email = ?", [params.email], function(err, result) {
+			if(result.length == 0) { // 중복된 이메일이 없음(쿼리 결과가 없음)
 				// 계정 DB에 넣음
-				db.query("INSERT INTO User SET ?", userDoc, function(err, result){
+				db.query("INSERT INTO User SET ?", userDoc, function(err, result) {
 					if(err) throw err;
-					
+
 					// 성공
-					callback({"result": true, "error": 0});
+					callback({ "result": true, "error": 0 });
 					console.log("Complete to Create Account.");
 				});
 			} else { // 중복된 이메일이 있음(쿼리 결과가 있음)
-				callback({"result": false, "error": 104});
+				callback({ "result": false, "error": 104 });
+			}
+		});
+	} else if(params.accountType == "Facebook") { // 페이스북인 경우
+		userDoc.fb_userid = params.fbUserId;
+		// 중복되있는지 확인
+		db.query("SELECT * FROM User WHERE fb_userid = ?", [params.fbUserId], function(err, result) {
+			if(result.length == 0) { // 중복되지 않음(쿼리 결과가 없음)
+				// 계정 DB에 넣음
+				db.query("INSERT INTO User SET ?", userDoc, function(err, result) {
+					if(err) throw err;
+
+					// 성공
+					callback({ "result": true, "error": 0 });
+					console.log("Complete to Create Account.");
+				});
+			} else { // 중복됨(쿼리 결과가 있음)
+				callback({ "result": false, "error": 101 });
 			}
 		});
 	}
@@ -121,6 +143,22 @@ AccountModel.login = function (params, callback) {
 			callback({"result": false, "error": 501});
 		}
 	}
+
+	// 페이스북 로그인 함수
+	var loginWithFacebook = function(callback) {
+		// 계정 정보 가져옴
+		db.query("SELECT * FROM User WHERE fb_userid = ?", params.fbUserId, function(err, result) {
+			if(err) throw err;
+
+			if(result.length == 0) {// 없음
+				// 에러 띄우고 종료
+				callback({ "result": false, "error": 500 });
+			} else {// 있음
+				// 쿼리 결과값 보내주고 계속 진행
+				callback(null, result[0]);
+			}
+		});
+	}
 	
 	// 세션 생성 함수
 	var createSession = function(err, result){
@@ -136,8 +174,10 @@ AccountModel.login = function (params, callback) {
 	}
 	
 	// 이메일인 경우
-	if(params.accountType == "Email"){
+	if(params.accountType == "Email") {
 		async.waterfall([loginWithEmail, checkPassword], createSession);
+	} else if(params.accountType == "Facebook") { // 페이스북인 경우
+		async.waterfall([loginWithFacebook], createSession);
 	}
 };
 

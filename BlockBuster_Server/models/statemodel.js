@@ -73,7 +73,7 @@ StateModel.saveScore = function(uid, score, callback) {
 		}
 
 		// 로그에 남김
-		var log = { uid: session.uid, score: score, get_date: new Date() };
+		var log = { uid: uid, score: score, get_time: new Date() };
 		logdb.query("INSERT INTO Log_Score SET ?", log);
 
 		var r = {
@@ -97,7 +97,6 @@ StateModel.saveScore = function(uid, score, callback) {
 	// 이전 랭킹 가져옴
 	db.query("SELECT previous_rank FROM User WHERE uid = ?", uid, function(err, result) {
 		if(err) throw err;
-
 		previousRank = result[0].previous_rank;
 
 		// 처음 등록하는 경우(previousRank가 null인 경우)
