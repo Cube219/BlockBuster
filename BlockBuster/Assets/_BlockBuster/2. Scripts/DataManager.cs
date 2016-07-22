@@ -6,6 +6,7 @@ public class DataManager {
 	public static string accountType;
 	public static string email;
 	public static string password;
+	public static string sid;
 
 	// 계정 정보를 불러옴
 	public static void LoadAccountData()
@@ -20,6 +21,7 @@ public class DataManager {
 				case "Email":
 					email = PlayerPrefs.GetString("email");
 					password = PlayerPrefs.GetString("password");
+					sid = PlayerPrefs.GetString("sid");
 					break;
 
 				default:
@@ -37,6 +39,7 @@ public class DataManager {
 			case "Email":
 				PlayerPrefs.SetString("email", email);
 				PlayerPrefs.SetString("password", password);
+				PlayerPrefs.SetString("sid", sid);
 				break;
 
 			default:

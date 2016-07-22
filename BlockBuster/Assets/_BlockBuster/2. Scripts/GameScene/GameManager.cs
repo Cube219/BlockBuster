@@ -111,9 +111,17 @@ namespace GameScene {
 		}
 		private IEnumerator GameOver_c()
 		{
+			// GameOver 애니메이션 재생
 			gameOverTxt.GetComponent<Animator>().SetTrigger("ShowTrigger");
 			yield return new WaitForSeconds(5.5f);
-			resultWindow.Show(1524200, 28, -27, true);
+
+			// 점수 서버로 보냄
+			ServerManager.m.Post_ScoreResult += SendScoreResult;
+			ServerManager.m.Post_Score_f(UserManager.uid, UserManager.sid, score);
+		}
+		private void SendScoreResult(Dictionary<string, string> data)
+		{
+			resultWindow.Show(score, int.Parse(data["rank"]), int.Parse(data["rankChange"]), bool.Parse(data["isNewRecord"]));
 		}
 
 		// 게임 클리어
@@ -152,6 +160,7 @@ namespace GameScene {
 			gameStage = 1;
 			score = 0;
 			life = 3;
+			scoreCustomText.changeText(score);
 			foreach(Image h in heartImages) {
 				h.gameObject.SetActive(true);
 			}

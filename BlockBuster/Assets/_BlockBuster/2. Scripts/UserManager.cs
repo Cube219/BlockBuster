@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UserManager {
 
@@ -9,6 +10,7 @@ public class UserManager {
 	public static string uid;
 	public static string sid;
 	public static string name;
-	public static string usertype;
+	public static string userType;
 	public static string accountType;
+
 }

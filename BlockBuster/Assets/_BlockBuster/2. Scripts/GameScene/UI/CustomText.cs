@@ -29,7 +29,7 @@ namespace GameScene.UI {
 
 		void Start()
 		{
-			changeText(123456);
+			changeText(0);
 		}
 
 		// 색 변경

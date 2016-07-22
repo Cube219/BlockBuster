@@ -58,6 +58,7 @@ namespace GameScene.UI.Windows {
 		public void Hide()
 		{
 			this.GetComponent<Animator>().SetTrigger("HideTrigger");
+			newRecordBubble.GetComponent<Animator>().SetTrigger("HideTrigger");
 			focusOutBackground.Hide();
 		}
 	}

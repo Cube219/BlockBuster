@@ -17,6 +17,25 @@ namespace LobbyScene {
 			hideScreenBackground.ShowImmediately();
 			// 화면을 보여줌
 			hideScreenBackground.Hide();
+
+			settingWindow.emailSignUpPanel_errorText.text = "";
+		}
+
+		void Start()
+		{
+			// 로그인 돼 있지 않은가?
+			if(UserManager.userState == UserManager.State.NotLogin) {
+				Debug.Log("Not Login");
+				// 설정 창 패널을 LoginPanel로 바꿔줌
+				settingWindow.ShowPanelImmediately(SettingWindow.Panel.Login);
+
+				// 설정 창 띄움
+				ShowSettingWindow();
+			} else { // 로그인 되어 있음
+					 // 설정 창 패널을 AccountPanel로 바꿔줌
+				settingWindow.ShowPanelImmediately(SettingWindow.Panel.Account);
+				settingWindow.accountPanel_nameText.text = UserManager.name;
+			}
 		}
 
 		// 설정 Window 보여줌

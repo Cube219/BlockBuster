@@ -14,6 +14,7 @@ public class ServerManager : MonoBehaviour {
 				GameObject c = new GameObject();
 				c.name = "ServerManager";
 				_m = c.AddComponent<ServerManager>();
+				DontDestroyOnLoad(c);
 			}
 			return _m;
 		}
@@ -34,6 +35,13 @@ public class ServerManager : MonoBehaviour {
 	public event Post_Login Post_LoginResult;
 	public event Post_Score Post_ScoreResult;
 	public event Post_Logout Post_LogoutResult;
+	
+	void OnApplicationQuit()
+	{
+		// 로그아웃 처리
+		if(UserManager.userState == UserManager.State.Login)
+			Post_Logout_f(UserManager.uid, UserManager.sid);
+	}
 
 	// 데이터 처리
 	private Dictionary<string, string> ProcessData(string jsonrawData)
@@ -49,7 +57,7 @@ public class ServerManager : MonoBehaviour {
 			{"userType", "User"},
 			{"accountType", "Email"},
 			{"email", email},
-			{"passsword", password}
+			{"password", password}
 		};
 
 		StartCoroutine(Post(url + "/api/v1/user", t, (string result)=> {
