@@ -318,6 +318,9 @@ namespace GameScene {
 		// 게임 오버
 		private void UpdateGameGameOver()
 		{
+			if(Input.GetKeyDown(KeyCode.Escape)) {
+				GoLobby();
+			}
 		}
 
 		// 일시 정지

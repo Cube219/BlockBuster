@@ -38,6 +38,16 @@ namespace LobbyScene {
 			}
 		}
 
+		void Update()
+		{
+			// 뒤로 가기 버튼 누르면 게임 종료
+			if(Input.GetKeyDown(KeyCode.Escape)) {
+				// 로그아웃 처리
+				if(UserManager.userState == UserManager.State.Login)
+					ServerManager.m.Post_Logout_f(UserManager.uid, UserManager.sid);
+			}
+		}
+
 		// 설정 Window 보여줌
 		public void ShowSettingWindow()
 		{
