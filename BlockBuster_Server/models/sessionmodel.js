@@ -14,11 +14,13 @@ SessionModel.create = function(params, callback){
 	for(var s in sessionList) {
 		if(sessionList[s].uid == params.uid){
 			isAlreadyLogined = true;
+			alreadySid = sessionList[s].sid;
 			break;
 		}
 	}
-	if(isAlreadyLogined == true){
-		return callback({"result": false, error: 502});
+	if(isAlreadyLogined == true) { // 이미 있음
+		// 해당 세션 지움
+		SessionModel.destroy(alreadySid, function(r) { });
 	}
 	
 	// 세션 생성
