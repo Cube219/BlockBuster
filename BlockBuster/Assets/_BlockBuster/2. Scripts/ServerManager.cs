@@ -28,6 +28,8 @@ public class ServerManager : MonoBehaviour {
 	public delegate void Post_Login(Dictionary<string, string> data);
 	public delegate void Post_Score(Dictionary<string, string> data);
 	public delegate void Post_Logout(Dictionary<string, string> data);
+	public delegate void Get_GetRank(Dictionary<string, string> data);
+	public delegate void Get_GetRanks(List<Dictionary<string, string>> data);
 
 	public event Post_Register Post_RegisterResult;
 	public event Post_ChangeName Post_ChangeNameResult;
@@ -35,6 +37,8 @@ public class ServerManager : MonoBehaviour {
 	public event Post_Login Post_LoginResult;
 	public event Post_Score Post_ScoreResult;
 	public event Post_Logout Post_LogoutResult;
+	public event Get_GetRank Get_GetRankResult;
+	public event Get_GetRanks Get_GetRanksResult;
 	
 	void OnApplicationQuit()
 	{
@@ -153,6 +157,38 @@ public class ServerManager : MonoBehaviour {
 		
 		StartCoroutine(Post(url + "/api/v1/user/logout", t, (string result) => {
 			Post_LogoutResult(ProcessData(result));
+		}));
+	}
+	
+	// 순위 가져옴
+	public void Get_GetRank_f(string uid)
+	{
+		Dictionary<string, string> t = new Dictionary<string, string> {
+			{"uid", uid}
+		};
+
+		StartCoroutine(Get(url + "/api/v1/score", t, (string result) => {
+			Get_GetRankResult(ProcessData(result));
+		}));
+	}
+
+	// 순위들 가져옴
+	public void Get_GetRanks_f(int rankStart, int rankEnd)
+	{
+		Dictionary<string, string> t = new Dictionary<string, string> {
+			{"rankStart", rankStart.ToString()},
+			{"rankEnd", rankEnd.ToString() }
+		};
+
+		StartCoroutine(Get(url + "/api/v1/score/multi", t, (string result) => {
+			//	Get_GetRanksResult(ProcessData(result));
+			JSONObject j = new JSONObject(result);
+
+			List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
+			foreach(JSONObject o in j.list[1].list) {
+				data.Add(o.ToDictionary());
+			}
+			Get_GetRanksResult(data);
 		}));
 	}
 
