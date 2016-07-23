@@ -53,6 +53,10 @@ namespace GameScene {
 			updateDelegates[(int)GameState.GameOver] = UpdateGameGameOver;
 			updateDelegates[(int)GameState.Pause] = UpdateGamePause;
 
+			// 로그인 되어 있으면 OFFLINE Text 지워줌
+			if(UserManager.userState == UserManager.State.Login)
+				DestroyOffline();
+
 			gameStage = 1;
 			gameState = GameState.FirstStart;
 		}
@@ -251,10 +255,6 @@ namespace GameScene {
 		// 처음 시작됨
 		private void UpdateGameFirstStart()
 		{
-			// 로그인 되어 있으면 OFFLINE Text 지워줌
-			if(UserManager.userState == UserManager.State.Login)
-				DestroyOffline();
-
 			if(isShowScreenRunning == false)
 				StartCoroutine(ShowScreen());
 		}
@@ -277,8 +277,7 @@ namespace GameScene {
 		private void UpdateGameLoad()
 		{
 			// 스테이지 생성
-			stageCreator.CreateStage(gameStage);
-			blockNumber = 21;
+			blockNumber = stageCreator.CreateStage(gameStage);
 			gameState = GameState.LateLoad;
 		}
 
