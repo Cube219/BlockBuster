@@ -2,7 +2,6 @@ var uuid = require("uuid");
 var forge = require("node-forge");
 var db = require("../app").db_connection;
 var SessionModel = require("./sessionmodel");
-//var N1qlQuery = require('couchbase').N1qlQuery;
 var async = require("async");
 
 function AccountModel() { };

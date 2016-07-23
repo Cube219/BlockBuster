@@ -121,47 +121,6 @@ function controlSession() {
 	}
 }
 
-//------------------------------------------------------------
-/*
-// 
-SessionModel.authenticate = function(req, res, next) {
-    if(!req.headers.authorization) {
-        next("Must be authorized to use");
-    }
-    var authInfo = req.headers.authorization.split(" ");
-    if(authInfo[0] === "Bearer") {
-        var sid = authInfo[1];
-        SessionModel.get(sid, function(error, result) {
-            if(error) {
-                return next(error);
-            }
-            SessionModel.refresh(sid, function() {});
-            req.uid = result.value.uid;
-            next();
-        });
-    }
-};
-
-// 세션 가져옴
-SessionModel.get = function(sid, callback) {
-    db.get("session::" + sid, function(error, result) {
-        if(error) {
-            callback(error, null);
-            return;
-        }
-        callback(null, result);
-    });
-};
-
-// 갱신?
-SessionModel.refresh = function(sid, callback) {
-    db.touch("session::" + sid, 3600, function(error, result) {
-        if(error) {
-            callback(error, null);
-        }
-    });
-};*/
-
 setInterval(controlSession, 1000);
 
 module.exports = SessionModel;

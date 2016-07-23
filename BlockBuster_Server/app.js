@@ -1,14 +1,10 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-//var couchbase = require("couchbase");
 var config = require("./config");
 var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Global declaration of the Couchbase server and bucket to be used
-//module.exports.bucket = (new couchbase.Cluster(config.couchbase.server)).openBucket(config.couchbase.bucket);
 
 // DB하고 연결
 var mysql = require('mysql');
@@ -28,6 +24,9 @@ db_connection.connect(function(err){
 		throw err;
 	}
 	console.log('Success connect db');
+
+	// DB Connection이 끊기지 않도록 주기적으로 쿼리를 보내는 함수 (임시방편, 이건 차후에 수정...)
+	setInterval(queryOnDBForever, 10000);
 });
 
 // Log DB하고 연결
@@ -46,6 +45,9 @@ logdb_connection.connect(function(err){
 		throw err;
 	}
 	console.log('Success connect logdb');
+
+	// DB Connection이 끊기지 않도록 주기적으로 쿼리를 보내는 함수 (임시방편, 이건 차후에 수정...)
+	setInterval(queryOnLogDBForever, 10000);
 });
 
 // All endpoints to be used in this application
@@ -54,3 +56,14 @@ var routes = require("./routes/routes.js")(app);
 var server = app.listen(3000, function () {
     console.log("Listening on port %s...", server.address().port);
 });
+
+// DB Connection이 끊기지 않도록 주기적으로 쿼리를 보내는 함수 (임시방편, 이건 차후에 수정...)
+var queryOnDBForever = function()
+{
+	db_connection.query("SELECT 1", function(err, res) { });
+}
+
+var queryOnLogDBForever = function()
+{
+	logdb_connection.query("SELECT 1", function(err, res) { });
+}

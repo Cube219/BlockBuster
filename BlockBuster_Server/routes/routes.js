@@ -134,49 +134,6 @@ var appRouter = function(app) {
 			res.send(result);
 		});
 	});
-
-	/*
-	app.get("/api/auth", function(req, res, next) {
-		if(!req.query.username) {
-			return next(JSON.stringify({"status": "error", "message": "A username must be provided"}));
-		}
-		if(!req.query.password) {
-			return next(JSON.stringify({"status": "error", "message": "A password must be provided"}));
-		}
-		AccountModel.getByUsername(req.query, function(error, user) {
-			if(error) {
-				return res.status(400).send(error);
-			}
-			if(!AccountModel.validatePassword(req.query.password, user[0].password)) {
-				return res.send({"status": "error", "message": "The password entered is invalid"});
-			}
-			SessionModel.create(user[0].uid, function(error, result) {
-				if(error) {
-					return res.status(400).send(error);
-				}
-				res.setHeader("Authorization", "Bearer " + result);
-				res.send(user);
-			});
-		});
-	});
-	
-	app.put("/api/state/:name", SessionModel.authenticate, function(req, res, next) {
-		StateModel.save(req.uid, req.params.name, parseInt(req.query.preVer, 10), req.body, function(error, result) {
-			if(error) {
-				return res.send(error);
-			}
-			res.send(result);
-		});
-	});
-	
-	app.get("/api/state/:name", SessionModel.authenticate, function(req, res, next) {
-		StateModel.getByUserIdAndName(req.uid, req.params.name, function(error, result) {
-			if(error) {
-				return res.send(error);
-			}
-			res.send(result);
-		});
-	});*/
 }
 
 module.exports = appRouter;
