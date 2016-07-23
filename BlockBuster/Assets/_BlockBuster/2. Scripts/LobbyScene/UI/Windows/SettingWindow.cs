@@ -97,14 +97,28 @@ namespace LobbyScene.UI.Windows {
 			ServerManager.m.Post_LogoutResult += LogoutResult;
 			ServerManager.m.Post_Logout_f(UserManager.uid, UserManager.sid);
 		}
-		public void LogoutResult(Dictionary<string, string> data)
+		public void LogoutResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_LogoutResult -= LogoutResult;
 
-			UserManager.name = null;
-			UserManager.userState = UserManager.State.NotLogin;
-			// LoginPanel로 이동
-			ShowPanel(Panel.Login);
+			if(isSuccess == true) { // 전송 성공
+				// 데이터 지움
+				DataManager.accountType = "NoData";
+				
+				// 상태 변경
+				UserManager.name = null;
+				UserManager.userState = UserManager.State.NotLogin;
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
+
+				// LoginPanel로 이동
+				ShowPanel(Panel.Login);
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
+			}
 		}
 
 		// 이름 변경
@@ -133,50 +147,70 @@ namespace LobbyScene.UI.Windows {
 				Debug.Log("Login Denied");
 			}
 		}
-		private void LoginWithFacebookResult(Dictionary<string, string> data)
+		private void LoginWithFacebookResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_LoginResult -= LoginWithFacebookResult;
 
-			if(data["result"] == "False") { // 페북으로 로그인 실패
-				// 계정을 새로 만듬
-				ServerManager.m.Post_RegisterResult += SignUpWithFacebookResult;
-				ServerManager.m.Post_RegisterWithFacebook_f(DataManager.fbUserid);
-			} else { // 성공
-				// 받은 유저 정보를 UserManager에 넣어줌(name 제외)
-				UserManager.userState = UserManager.State.Login;
-				UserManager.uid = data["uid"];
-				UserManager.sid = data["sid"];
-				UserManager.accountType = data["accountType"];
-				UserManager.userType = data["userType"];
-				//UserManager.name = data["name"];
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 페북으로 로그인 실패
+					// 계정을 새로 만듬
+					ServerManager.m.Post_RegisterResult += SignUpWithFacebookResult;
+					ServerManager.m.Post_RegisterWithFacebook_f(DataManager.fbUserid);
+				} else { // 성공
+					// 오프라인 모드 제거
+					LobbyManager.m.DestroyOffline();
 
-				// 로그인 정보 저장
-				DataManager.accountType = UserManager.accountType;
-				DataManager.SaveAccountData();
+					// 받은 유저 정보를 UserManager에 넣어줌(name 제외)
+					UserManager.userState = UserManager.State.Login;
+					UserManager.uid = data["uid"];
+					UserManager.sid = data["sid"];
+					UserManager.accountType = data["accountType"];
+					UserManager.userType = data["userType"];
+					//UserManager.name = data["name"];
 
-				// 방금 새로 만든 계정인 경우(UserManager.name에 이미 값이 있는 경우)
-				if(UserManager.name != null) {
-					// CreateAccountPanel로 이동
-					ShowPanel(Panel.CreateAccount);
-				} else {
-					// name 값 넣어줌
-					UserManager.name = data["name"];
+					// 로그인 정보 저장
+					DataManager.accountType = UserManager.accountType;
+					DataManager.SaveAccountData();
 
-					// AccountPanel로 이동
-					accountPanel_nameText.text = UserManager.name;
-					ShowPanel(Panel.Account);
+					// 방금 새로 만든 계정인 경우(UserManager.name에 이미 값이 있는 경우)
+					if(UserManager.name != null) {
+						// CreateAccountPanel로 이동
+						ShowPanel(Panel.CreateAccount);
+					} else {
+						// name 값 넣어줌
+						UserManager.name = data["name"];
+
+						// AccountPanel로 이동
+						accountPanel_nameText.text = UserManager.name;
+						ShowPanel(Panel.Account);
+					}
 				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
 			}
+			
 		}
-		private void SignUpWithFacebookResult(Dictionary<string, string> data)
+		private void SignUpWithFacebookResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
-			if(data["result"] == "False") { // 페북으로 계정 새로 만들기 실패
-			} else { // 성공
-				// 방금 새로 만든 계정이라는 흔적
-				UserManager.name = "!@#$";
-				// 서버로 로그인 시도
-				ServerManager.m.Post_LoginResult += LoginWithFacebookResult;
-				ServerManager.m.Post_LoginWithFacebook_f(DataManager.fbUserid);
+			ServerManager.m.Post_RegisterResult -= SignUpWithFacebookResult;
+
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 페북으로 계정 새로 만들기 실패
+				} else { // 성공
+					// 방금 새로 만든 계정이라는 흔적
+					UserManager.name = "!@#$";
+					// 서버로 로그인 시도
+					ServerManager.m.Post_LoginResult += LoginWithFacebookResult;
+					ServerManager.m.Post_LoginWithFacebook_f(DataManager.fbUserid);
+				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
 			}
 		}
 
@@ -205,18 +239,25 @@ namespace LobbyScene.UI.Windows {
 			ServerManager.m.Post_ChangeNameResult += ChangeNameResult;
 			ServerManager.m.Post_ChangeName_f(UserManager.uid, createAccountPanel_nameInputField.text);
 		}
-		public void ChangeNameResult(Dictionary<string, string> data)
+		public void ChangeNameResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_ChangeNameResult -= ChangeNameResult;
 
-			if(data["result"] == "False") { // 이름바꾸기 실패
-			} else { // 성공
-				// UserManager에 반영
-				UserManager.name = createAccountPanel_nameInputField.text;
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 이름바꾸기 실패
+				} else { // 성공
+						 // UserManager에 반영
+					UserManager.name = createAccountPanel_nameInputField.text;
 
-				// AccountPanel로 이동
-				accountPanel_nameText.text = UserManager.name;
-				ShowPanel(Panel.Account);
+					// AccountPanel로 이동
+					accountPanel_nameText.text = UserManager.name;
+					ShowPanel(Panel.Account);
+				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
 			}
 		}
 
@@ -229,19 +270,26 @@ namespace LobbyScene.UI.Windows {
 			ServerManager.m.Post_RegisterResult += SignUpResult;
 			ServerManager.m.Post_RegisterWithEmail_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
 		}
-		public void SignUpResult(Dictionary<string, string> data)
+		public void SignUpResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_RegisterResult -= SignUpResult;
 
-			if(data["result"] == "False") { // 회원가입 실패
-				if(data["error"] == "104") // 이미 이 이메일로 회원가입이 되어 있음
-					emailSignUpPanel_errorText.text = "This Email is already existing.";
-			} else { // 성공
-				// 방금 새로 만든 계정이라는 흔적
-				UserManager.name = "!@#$";
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 회원가입 실패
+					if(data["error"] == "104") // 이미 이 이메일로 회원가입이 되어 있음
+						emailSignUpPanel_errorText.text = "This Email is already existing.";
+				} else { // 성공
+						 // 방금 새로 만든 계정이라는 흔적
+					UserManager.name = "!@#$";
 
-				// 해당 정보로 바로 로그인
-				EmailSignUpPanel_Login();
+					// 해당 정보로 바로 로그인
+					EmailSignUpPanel_Login();
+				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
 			}
 		}
 
@@ -253,54 +301,61 @@ namespace LobbyScene.UI.Windows {
 			ServerManager.m.Post_LoginResult += LoginResult;
 			ServerManager.m.Post_LoginWithEmail_f(emailSignUpPanel_emailInputField.text, emailSignUpPanel_passwordInputField.text);
 		}
-		public void LoginResult(Dictionary<string, string> data)
+		public void LoginResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_LoginResult -= LoginResult;
 
-			if(data["result"] == "False") { // 로그인 실패
-				if(data["error"] == "500") // 이 이메일로 된 계정이 없음
-					emailSignUpPanel_errorText.text = "Wrong email";
-				else if(data["error"] == "501") // 비밀번호가 맞지 않음
-					emailSignUpPanel_errorText.text = "Wrong password";
-				else if(data["error"] == "502") // 이미 접속 중임.
-					emailSignUpPanel_errorText.text = "Already accessing";
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 로그인 실패
+					if(data["error"] == "500") // 이 이메일로 된 계정이 없음
+						emailSignUpPanel_errorText.text = "Wrong email";
+					else if(data["error"] == "501") // 비밀번호가 맞지 않음
+						emailSignUpPanel_errorText.text = "Wrong password";
+					else if(data["error"] == "502") // 이미 접속 중임.
+						emailSignUpPanel_errorText.text = "Already accessing";
 
-			} else { // 성공
-				// 받은 유저 정보를 UserManager에 넣어줌(name 제외)
-				UserManager.userState = UserManager.State.Login;
-				UserManager.uid = data["uid"];
-				UserManager.sid = data["sid"];
-				UserManager.accountType = data["accountType"];
-				UserManager.userType = data["userType"];
+				} else { // 성공
+					// 오프라인 모드 제거
+					LobbyManager.m.DestroyOffline();
 
-				// 로그인 정보 저장
-				DataManager.accountType = UserManager.accountType;
-				switch(DataManager.accountType) {
-					case "Email":
-						DataManager.email = emailSignUpPanel_emailInputField.text;
-						DataManager.password = emailSignUpPanel_passwordInputField.text;
-						break;
+					// 받은 유저 정보를 UserManager에 넣어줌(name 제외)
+					UserManager.userState = UserManager.State.Login;
+					UserManager.uid = data["uid"];
+					UserManager.sid = data["sid"];
+					UserManager.accountType = data["accountType"];
+					UserManager.userType = data["userType"];
 
-					case "Facebook":
-						break;
+					// 로그인 정보 저장
+					DataManager.accountType = UserManager.accountType;
+					switch(DataManager.accountType) {
+						case "Email":
+							DataManager.email = emailSignUpPanel_emailInputField.text;
+							DataManager.password = emailSignUpPanel_passwordInputField.text;
+							break;
 
-					default:
-						break;
+						default:
+							break;
+					}
+					DataManager.SaveAccountData();
+
+					// 방금 새로 만든 계정인 경우(UserManager.name에 이미 값이 있는 경우)
+					if(UserManager.name != null) {
+						// CreateAccountPanel로 이동
+						ShowPanel(Panel.CreateAccount);
+					} else {
+						// name 값 넣어줌
+						UserManager.name = data["name"];
+
+						// AccountPanel로 이동
+						accountPanel_nameText.text = UserManager.name;
+						ShowPanel(Panel.Account);
+					}
 				}
-				DataManager.SaveAccountData();
-
-				// 방금 새로 만든 계정인 경우(UserManager.name에 이미 값이 있는 경우)
-				if(UserManager.name != null) {
-					// CreateAccountPanel로 이동
-					ShowPanel(Panel.CreateAccount);
-				} else {
-					// name 값 넣어줌
-					UserManager.name = data["name"];
-
-					// AccountPanel로 이동
-					accountPanel_nameText.text = UserManager.name;
-					ShowPanel(Panel.Account);
-				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				LobbyManager.m.SetOffline();
 			}
 		}
 

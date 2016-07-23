@@ -22,14 +22,14 @@ public class ServerManager : MonoBehaviour {
 
 	private string url = "http://52.78.64.117:3000";
 
-	public delegate void Post_Register(Dictionary<string, string> data);
-	public delegate void Post_ChangeName(Dictionary<string, string> data);
-	public delegate void Get_GetUserByUid(Dictionary<string, string> data);
-	public delegate void Post_Login(Dictionary<string, string> data);
-	public delegate void Post_Score(Dictionary<string, string> data);
-	public delegate void Post_Logout(Dictionary<string, string> data);
-	public delegate void Get_GetRank(Dictionary<string, string> data);
-	public delegate void Get_GetRanks(List<Dictionary<string, string>> data);
+	public delegate void Post_Register(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Post_ChangeName(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Get_GetUserByUid(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Post_Login(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Post_Score(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Post_Logout(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Get_GetRank(Dictionary<string, string> data, bool isSuccess, string error = null);
+	public delegate void Get_GetRanks(List<Dictionary<string, string>> data, bool isSuccess, string error = null);
 
 	public event Post_Register Post_RegisterResult;
 	public event Post_ChangeName Post_ChangeNameResult;
@@ -39,6 +39,8 @@ public class ServerManager : MonoBehaviour {
 	public event Post_Logout Post_LogoutResult;
 	public event Get_GetRank Get_GetRankResult;
 	public event Get_GetRanks Get_GetRanksResult;
+
+	public bool isLastTransferFailed = false;
 	
 	void OnApplicationQuit()
 	{
@@ -64,8 +66,11 @@ public class ServerManager : MonoBehaviour {
 			{"password", password}
 		};
 
-		StartCoroutine(Post(url + "/api/v1/user", t, (string result)=> {
-			Post_RegisterResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_RegisterResult(ProcessData(result), isSuccess);
+			else
+				Post_RegisterResult(null, isSuccess, error);
 		}));
 	}
 	// 회원가입(Facebook)
@@ -77,8 +82,11 @@ public class ServerManager : MonoBehaviour {
 			{"fbUserId", fbUserId}
 		};
 
-		StartCoroutine(Post(url + "/api/v1/user", t, (string result) => {
-			Post_RegisterResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_RegisterResult(ProcessData(result), isSuccess);
+			else
+				Post_RegisterResult(null, isSuccess, error);
 		}));
 	}
 
@@ -90,8 +98,11 @@ public class ServerManager : MonoBehaviour {
 			{"name", name}
 		};
 		
-		StartCoroutine(Post(url + "/api/v1/user/change_name", t, (string result) => {
-			Post_ChangeNameResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user/change_name", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_ChangeNameResult(ProcessData(result), isSuccess);
+			else
+				Post_ChangeNameResult(null, isSuccess, error);
 		}));
 	}
 
@@ -102,8 +113,11 @@ public class ServerManager : MonoBehaviour {
 			{"uid", uid}
 		};
 
-		StartCoroutine(Get(url + "/api/v1/user/uid", t, (string result) => {
-			Get_GetUserByUidResult(ProcessData(result));
+		StartCoroutine(Get(url + "/api/v1/user/uid", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Get_GetUserByUidResult(ProcessData(result), isSuccess);
+			else
+				Get_GetUserByUidResult(null, isSuccess, error);
 		}));
 	}
 	
@@ -116,8 +130,11 @@ public class ServerManager : MonoBehaviour {
 			{"password", password}
 		};
 		
-		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result) => {
-			Post_LoginResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_LoginResult(ProcessData(result), isSuccess);
+			else
+				Post_LoginResult(null, isSuccess, error);
 		}));
 	}
 	// 로그인(Facebook)
@@ -128,8 +145,11 @@ public class ServerManager : MonoBehaviour {
 			{"fbUserId", fbUserId}
 		};
 
-		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result) => {
-			Post_LoginResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user/login", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_LoginResult(ProcessData(result), isSuccess);
+			else
+				Post_LoginResult(null, isSuccess, error);
 		}));
 	}
 
@@ -142,8 +162,11 @@ public class ServerManager : MonoBehaviour {
 			{"score", score.ToString()}
 		};
 		
-		StartCoroutine(Post(url + "/api/v1/score", t, (string result) => {
-			Post_ScoreResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/score", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_ScoreResult(ProcessData(result), isSuccess);
+			else
+				Post_ScoreResult(null, isSuccess, error);
 		}));
 	}
 
@@ -155,8 +178,11 @@ public class ServerManager : MonoBehaviour {
 			{"sid", sid}
 		};
 		
-		StartCoroutine(Post(url + "/api/v1/user/logout", t, (string result) => {
-			Post_LogoutResult(ProcessData(result));
+		StartCoroutine(Post(url + "/api/v1/user/logout", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Post_LogoutResult(ProcessData(result), isSuccess);
+			else
+				Post_LogoutResult(null, isSuccess, error);
 		}));
 	}
 	
@@ -167,8 +193,11 @@ public class ServerManager : MonoBehaviour {
 			{"uid", uid}
 		};
 
-		StartCoroutine(Get(url + "/api/v1/score", t, (string result) => {
-			Get_GetRankResult(ProcessData(result));
+		StartCoroutine(Get(url + "/api/v1/score", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true)
+				Get_GetRankResult(ProcessData(result), isSuccess);
+			else
+				Get_GetRankResult(null, isSuccess, error);
 		}));
 	}
 
@@ -180,20 +209,22 @@ public class ServerManager : MonoBehaviour {
 			{"rankEnd", rankEnd.ToString() }
 		};
 
-		StartCoroutine(Get(url + "/api/v1/score/multi", t, (string result) => {
-			//	Get_GetRanksResult(ProcessData(result));
-			JSONObject j = new JSONObject(result);
+		StartCoroutine(Get(url + "/api/v1/score/multi", t, (string result, bool isSuccess, string error) => {
+			if(isSuccess == true) {
+				JSONObject j = new JSONObject(result);
 
-			List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
-			foreach(JSONObject o in j.list[1].list) {
-				data.Add(o.ToDictionary());
-			}
-			Get_GetRanksResult(data);
+				List<Dictionary<string, string>> data = new List<Dictionary<string, string>>();
+				foreach(JSONObject o in j.list[1].list) {
+					data.Add(o.ToDictionary());
+				}
+				Get_GetRanksResult(data, isSuccess);
+			} else
+				Get_GetRanksResult(null, isSuccess, error);
 		}));
 	}
 
 	// ------------------------------------
-	private IEnumerator Get(string url, Dictionary<string, string> datas, System.Action<string> callback)
+	private IEnumerator Get(string url, Dictionary<string, string> datas, System.Action<string, bool, string> callback)
 	{
 		StringBuilder b = new StringBuilder(url);
 		b.Append("?");
@@ -207,16 +238,26 @@ public class ServerManager : MonoBehaviour {
 
 		WWW www = new WWW(b.ToString());
 
-		// 보냄
-		yield return www;
-
-		if(www.error == "Null") {
-		} else {
-			callback(www.text);
+		// 보냄 (3번까지 시도)
+		for(int i = 1; i <= 3; i++) {
+			yield return www;
+			Debug.Log(i + "번째 시도");
+			if(www.error == null) { // 이상 없음
+				isLastTransferFailed = false;
+				GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().SuccessRetry();
+				callback(www.text, true, null); // 값 보내줌
+				yield break;
+			}
+			GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().Retry(i, 3);
 		}
+
+		// 이상 있음
+		GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().FailRetry();
+		isLastTransferFailed = true;
+		callback(null, false, www.error);
 	}
 
-	private IEnumerator Post(string url, Dictionary<string, string> datas, System.Action<string> callback)
+	private IEnumerator Post(string url, Dictionary<string, string> datas, System.Action<string, bool, string> callback)
 	{
 		WWWForm form = new WWWForm();
 		foreach(KeyValuePair<string, string> data in datas) {
@@ -225,13 +266,23 @@ public class ServerManager : MonoBehaviour {
 		
 		WWW www = new WWW(url, form);
 
-		// 보냄
-		yield return www;
-
-		if(www.error == "Null") {
-		} else {
-			callback(www.text);
+		// 보냄 (3번까지 시도)
+		for(int i = 1; i <= 3; i++) {
+			yield return www;
+			Debug.Log(i + "번째 시도");
+			if(www.error == null) { // 이상 없음
+				isLastTransferFailed = false;
+				GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().SuccessRetry();
+				callback(www.text, true, www.error); // 값 보내줌
+				yield break;
+			}
+			GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().Retry(i, 3);
 		}
+
+		// 이상 있음
+		GameObject.FindGameObjectWithTag("FailServerText").GetComponent<FailServerText>().FailRetry();
+		isLastTransferFailed = true;
+		callback(null, false, www.error);
 
 	}
 }

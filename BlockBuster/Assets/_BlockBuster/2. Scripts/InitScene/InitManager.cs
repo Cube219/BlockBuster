@@ -59,19 +59,24 @@ namespace InitScene {
 			}
 		}
 
-		public void LoginComplete(Dictionary<string, string> data)
+		public void LoginComplete(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_LoginResult -= LoginComplete;
 
-			if(data["result"] == "False") { // 로그인 실패
-			} else { // 로그인 성공
-				// 받은 유저 정보들 UserManager에 넣어줌
-				UserManager.userState = UserManager.State.Login;
-				UserManager.uid = data["uid"];
-				UserManager.sid = data["sid"];
-				UserManager.name = data["name"];
-				UserManager.accountType = data["accountType"];
-				UserManager.userType = data["userType"];
+			if(isSuccess == true) { // 전송 성공
+				if(data["result"] == "False") { // 로그인 실패
+				} else { // 로그인 성공
+					// 받은 유저 정보들 UserManager에 넣어줌
+					UserManager.userState = UserManager.State.Login;
+					UserManager.uid = data["uid"];
+					UserManager.sid = data["sid"];
+					UserManager.name = data["name"];
+					UserManager.accountType = data["accountType"];
+					UserManager.userType = data["userType"];
+				}
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
 			}
 
 			// 다음 Scene으로 

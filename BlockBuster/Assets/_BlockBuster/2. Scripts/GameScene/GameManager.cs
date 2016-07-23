@@ -63,6 +63,24 @@ namespace GameScene {
 		}
 
 		// --------------------------
+
+		// 오프라인 모드
+		public void SetOffline()
+		{
+			// 로그인 상태 해제
+			UserManager.userState = UserManager.State.NotLogin;
+			// OFFLINE Text 보여줌
+			GameObject.FindGameObjectWithTag("OfflineText").GetComponent<CanvasGroup>().alpha = 1f;
+		}
+
+		// 오프라인 모드 해제
+		public void DestroyOffline()
+		{
+			// OFFLINE Text 지워줌
+			GameObject.FindGameObjectWithTag("OfflineText").GetComponent<CanvasGroup>().alpha = 0f;
+		}
+
+		// --------------------------
 		// 스코어 얻음
 		public void GetScore(int score)
 		{
@@ -115,14 +133,31 @@ namespace GameScene {
 			gameOverTxt.GetComponent<Animator>().SetTrigger("ShowTrigger");
 			yield return new WaitForSeconds(5.5f);
 
-			// 점수 서버로 보냄
-			ServerManager.m.Post_ScoreResult += SendScoreResult;
-			ServerManager.m.Post_Score_f(UserManager.uid, UserManager.sid, score);
+			// 로그인 한 상태인가?
+			if(UserManager.userState == UserManager.State.Login) {
+				// 점수 서버로 보냄
+				ServerManager.m.Post_ScoreResult += SendScoreResult;
+				ServerManager.m.Post_Score_f(UserManager.uid, UserManager.sid, score);
+			} else { // 아님(OFFLINE 모드임)
+				// 그냥 결과창 표시
+				resultWindow.Show(score, 0, 0, false);
+			}
 		}
-		private void SendScoreResult(Dictionary<string, string> data)
+		private void SendScoreResult(Dictionary<string, string> data, bool isSuccess, string error)
 		{
 			ServerManager.m.Post_ScoreResult -= SendScoreResult;
-			resultWindow.Show(score, int.Parse(data["rank"]), int.Parse(data["rankChange"]), bool.Parse(data["isNewRecord"]));
+
+			if(isSuccess == true) { // 전송 성공
+				resultWindow.Show(score, int.Parse(data["rank"]), int.Parse(data["rankChange"]), bool.Parse(data["isNewRecord"]));
+			} else { // 전송 실패
+				Debug.Log("Fail to transfer to server!");
+				Debug.Log(error);
+				// 오프라인 모드로 변경
+				SetOffline();
+
+				// 결과창 표시
+				resultWindow.Show(score, 0, 0, false);
+			}
 		}
 
 		// 게임 클리어
@@ -216,6 +251,10 @@ namespace GameScene {
 		// 처음 시작됨
 		private void UpdateGameFirstStart()
 		{
+			// 로그인 되어 있으면 OFFLINE Text 지워줌
+			if(UserManager.userState == UserManager.State.Login)
+				DestroyOffline();
+
 			if(isShowScreenRunning == false)
 				StartCoroutine(ShowScreen());
 		}
