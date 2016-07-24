@@ -6,6 +6,8 @@ namespace GameScene.Blocks {
 	public class Block:MonoBehaviour {
 
 		public GameObject breakedBlock;
+		public GameObject effect;
+		public AudioClip breakSound;
 
 		public int hp;
 
@@ -24,8 +26,11 @@ namespace GameScene.Blocks {
 			hp -= damage;
 			if(hp <= 0) {
 
+				AudioSource.PlayClipAtPoint(breakSound, Vector2.zero);
+
 				GameManager.m.BreakBlock();
 
+				Destroy(Instantiate(effect, hitPos, Quaternion.identity), 3);
 				GameObject b = Instantiate(breakedBlock, transform.position, transform.rotation) as GameObject;
 
 				b.GetComponent<BreakedBlock>().SetColor(color);
@@ -41,6 +46,8 @@ namespace GameScene.Blocks {
 			foreach(ContactPoint2D contact in col.contacts) {
 				if(contact.collider.gameObject.tag == "Ball") {
 					yield return null;
+					yield return null;
+
 					HPDown(1, col.relativeVelocity.normalized * -1, contact.point);
 					break;
 				}

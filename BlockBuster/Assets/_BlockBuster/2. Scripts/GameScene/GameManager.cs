@@ -27,6 +27,12 @@ namespace GameScene {
 
 		public ResultWindow resultWindow;
 
+		public AudioClip clearSound;
+		public AudioClip stageSound;
+		public AudioClip failSound;
+		public AudioClip gameOverSound;
+		public AudioClip popupSound;
+
 		private enum GameState { FirstStart, Load, LateLoad, Ready, Run, Respawn, GameOver, Pause, Count};
 		private GameState gameState;
 
@@ -36,7 +42,7 @@ namespace GameScene {
 		private List<Ball> balls = new List<Ball>();
 		private int gameStage;
 		private int score = 0;
-		private int life = 1;
+		private int life = 3;
 		private int blockNumber;
 
 		void Awake()
@@ -94,6 +100,7 @@ namespace GameScene {
 		// 목슴 감소
 		public void LoseLife()
 		{
+			AudioSource.PlayClipAtPoint(failSound, Vector2.zero);
 			life--;
 			heartImages[life].gameObject.SetActive(false);
 
@@ -144,6 +151,7 @@ namespace GameScene {
 				ServerManager.m.Post_Score_f(UserManager.uid, UserManager.sid, score);
 			} else { // 아님(OFFLINE 모드임)
 				// 그냥 결과창 표시
+				AudioSource.PlayClipAtPoint(popupSound, Vector2.zero);
 				resultWindow.Show(score, 0, 0, false);
 			}
 		}
@@ -160,6 +168,7 @@ namespace GameScene {
 				SetOffline();
 
 				// 결과창 표시
+				AudioSource.PlayClipAtPoint(popupSound, Vector2.zero);
 				resultWindow.Show(score, 0, 0, false);
 			}
 		}
@@ -174,8 +183,11 @@ namespace GameScene {
 			foreach(Ball b in balls) {
 				b.Pause();
 			}
+
+			AudioSource.PlayClipAtPoint(clearSound, Vector2.zero);
 			stageClearTxt.GetComponent<Animator>().SetTrigger("ShowTrigger");
 			yield return new WaitForSeconds(4.5f);
+
 			// 공들을 다 지움
 			foreach(Ball b in balls) {
 				Destroy(b.gameObject);

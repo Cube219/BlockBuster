@@ -7,6 +7,7 @@ namespace GameScene {
 
 		public float speed = 14f;
 		public float currentSpeed = 14f;
+		public AudioClip tockSound;
 
 		private bool isPaused = false;
 		private Vector2 pausedVelocity;
@@ -27,7 +28,7 @@ namespace GameScene {
 			}
 		}
 
-		// 공 재게
+		// 공 재개
 		public void Resume()
 		{
 			if(isPaused == true) {
@@ -56,7 +57,7 @@ namespace GameScene {
 		// 공 충돌
 		void OnCollisionEnter2D(Collision2D coll)
 		{
-			//AudioSource.PlayClipAtPoint(tockSound, Vector2.zero);
+			AudioSource.PlayClipAtPoint(tockSound, Vector2.zero);
 			// 죽음 벽에 부딫치면 죽음
 			if(coll.gameObject.tag == "DeathWall") {
 				GameManager.m.BallDied(this);
