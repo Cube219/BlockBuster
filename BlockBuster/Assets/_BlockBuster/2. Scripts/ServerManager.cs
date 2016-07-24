@@ -236,10 +236,11 @@ public class ServerManager : MonoBehaviour {
 			b.Remove(b.Length - 1, 1);
 		}
 
-		WWW www = new WWW(b.ToString());
+		WWW www = null;
 
 		// 보냄 (3번까지 시도)
 		for(int i = 1; i <= 3; i++) {
+			www = new WWW(b.ToString());
 			yield return www;
 			Debug.Log(i + "번째 시도");
 			if(www.error == null) { // 이상 없음
@@ -263,11 +264,12 @@ public class ServerManager : MonoBehaviour {
 		foreach(KeyValuePair<string, string> data in datas) {
 			form.AddField(data.Key, data.Value);
 		}
-		
-		WWW www = new WWW(url, form);
+
+		WWW www = null;
 
 		// 보냄 (3번까지 시도)
 		for(int i = 1; i <= 3; i++) {
+			www = new WWW(url, form);
 			yield return www;
 			Debug.Log(i + "번째 시도");
 			if(www.error == null) { // 이상 없음
