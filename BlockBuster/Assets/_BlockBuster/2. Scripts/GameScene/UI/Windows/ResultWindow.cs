@@ -25,8 +25,10 @@ namespace GameScene.UI.Windows {
 			rankChangeNum.text = Mathf.Abs(rankChange).ToString();
 
 			// 애니메이션 재생
-			this.GetComponent<Animator>().SetTrigger("ShowTrigger");
-			focusOutBackground.Show();
+			if(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Init")) {
+				this.GetComponent<Animator>().SetTrigger("ShowTrigger");
+				focusOutBackground.Show();
+			}
 
 			// RankChange값에 따라서 재생할 ChangeSymbol 바꿈
 			if(rankChange < 0) {
@@ -57,9 +59,11 @@ namespace GameScene.UI.Windows {
 		// 숨김
 		public void Hide()
 		{
-			this.GetComponent<Animator>().SetTrigger("HideTrigger");
-			newRecordBubble.GetComponent<Animator>().SetTrigger("HideTrigger");
-			focusOutBackground.Hide();
+			if(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+				this.GetComponent<Animator>().SetTrigger("HideTrigger");
+				newRecordBubble.GetComponent<Animator>().SetTrigger("HideTrigger");
+				focusOutBackground.Hide();
+			}
 		}
 	}
 }

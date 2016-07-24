@@ -26,6 +26,7 @@ namespace GameScene {
 		public Image[] heartImages;
 
 		public ResultWindow resultWindow;
+		public PauseWindow pauseWindow;
 
 		public AudioClip clearSound;
 		public AudioClip stageSound;
@@ -70,6 +71,12 @@ namespace GameScene {
 		void Update()
 		{
 			updateDelegates[(int)gameState]();
+		}
+
+		void OnApplicationPause()
+		{
+			pauseWindow.Show();
+			GamePause();
 		}
 
 		// --------------------------
@@ -205,20 +212,31 @@ namespace GameScene {
 		}
 		private IEnumerator GameRetry_c()
 		{
-			// 결과창 닫음
+			// 결과 / 일시정지 창 닫음
 			resultWindow.Hide();
+			pauseWindow.Hide();
 			yield return new WaitForSeconds(0.6f);
+			GameResume();
+
 			// 초기화
 			gameStage = 1;
 			score = 0;
 			life = 3;
 			scoreCustomText.changeText(score);
+			// 라이프 회복
 			foreach(Image h in heartImages) {
 				h.gameObject.SetActive(true);
 			}
+			// 벽돌들 다 지움
 			GameObject[] t = GameObject.FindGameObjectsWithTag("Block");
 			foreach(GameObject tt in t)
 				Destroy(tt);
+			// 공들을 다 지움
+			foreach(Ball b in balls) {
+				Destroy(b.gameObject);
+			}
+			balls.Clear();
+
 			// 시작
 			gameState = GameState.Load;
 		}
@@ -245,7 +263,6 @@ namespace GameScene {
 				foreach(Ball b in balls) {
 					b.Pause();
 				}
-				Time.timeScale = 0;
 				gameState = GameState.Pause;
 			}
 		}
@@ -258,7 +275,6 @@ namespace GameScene {
 				foreach(Ball b in balls) {
 					b.Resume();
 				}
-				Time.timeScale = 1;
 				gameState = GameState.Run;
 			}
 		}
@@ -348,6 +364,7 @@ namespace GameScene {
 		private void UpdateGameRun()
 		{
 			if(Input.GetKeyDown(KeyCode.Escape)) {
+				pauseWindow.Show();
 				GamePause();
 			}
 		}
@@ -378,6 +395,7 @@ namespace GameScene {
 		private void UpdateGamePause()
 		{
 			if(Input.GetKeyDown(KeyCode.Escape)) {
+				pauseWindow.Hide();
 				GameResume();
 			}
 		}
