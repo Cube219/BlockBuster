@@ -75,8 +75,10 @@ namespace GameScene {
 
 		void OnApplicationPause()
 		{
-			pauseWindow.Show();
-			GamePause();
+			if(gameState == GameState.Run) {
+				pauseWindow.Show();
+				GamePause();
+			}
 		}
 
 		// --------------------------
